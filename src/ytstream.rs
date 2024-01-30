@@ -47,32 +47,10 @@ impl YTStream {
     pub async fn extract(self, id: String) {}
 
     pub async fn video_data_by_innertube(&self, id: String) -> Result<PlayerResponseData, Error> {
-        let data = InnertubeRequest {
-            video_id: id,
-            browse_id: None,
-            context: InnertubeContext {
-                client: InnertubeClient {
-                    hl: "en".to_string(),
-                    gl: "US".to_string(),
-                    time_zone: "UTC".to_string(),
-                    client_name: CLIENT_NAME.to_string(),
-                    client_version: CLIENT_VERSION.to_string(),
-                    android_sdk_version: ANDROID_SDK_VERSION,
-                    user_agent: USER_AGENT.to_string(),
-                }
-            },
-            playback_context: Some(PlaybackContext {
-                content_playback_context: ContentPlaybackContext {
-                    html5preference: "HTML5_PREF_WANTS".to_string()
-                }
-            }),
-            content_check_ok: true,
-            racy_check_ok: true,
-            params: PLAYER_PARAMS.to_string(),
-        };
+        let request = InnertubeRequest::video_data_request(id);
 
         self.client.post("https://www.youtube.com/youtubei/v1/player?key=".to_owned() + CLIENT_KEY)
-            .json(&data)
+            .json(&request)
             .send()
             .await
             .map_err(|e| Error::Request(e))?
@@ -82,32 +60,10 @@ impl YTStream {
     }
 
     pub async fn video_data_by_innertube_raw(&self, id: String) -> Result<String, Error> {
-        let data = InnertubeRequest {
-            video_id: id,
-            browse_id: None,
-            context: InnertubeContext {
-                client: InnertubeClient {
-                    hl: "en".to_string(),
-                    gl: "US".to_string(),
-                    time_zone: "UTC".to_string(),
-                    client_name: CLIENT_NAME.to_string(),
-                    client_version: CLIENT_VERSION.to_string(),
-                    android_sdk_version: ANDROID_SDK_VERSION,
-                    user_agent: USER_AGENT.to_string(),
-                }
-            },
-            playback_context: Some(PlaybackContext {
-                content_playback_context: ContentPlaybackContext {
-                    html5preference: "HTML5_PREF_WANTS".to_string()
-                }
-            }),
-            content_check_ok: true,
-            racy_check_ok: true,
-            params: PLAYER_PARAMS.to_string(),
-        };
+        let request = InnertubeRequest::video_data_request(id);
 
         self.client.post("https://www.youtube.com/youtubei/v1/player?key=".to_owned() + CLIENT_KEY)
-            .json(&data)
+            .json(&request)
             .send()
             .await
             .map_err(|e| Error::Request(e))?
@@ -120,18 +76,42 @@ impl YTStream {
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct InnertubeRequest {
-    video_id: String,
+    video_id: Option<String>,
     browse_id: Option<String>,
+    continuation: Option<String>,
     context: InnertubeContext,
     playback_context: Option<PlaybackContext>,
-    content_check_ok: bool,
-    racy_check_ok: bool,
+    content_check_ok: Option<bool>,
+    racy_check_ok: Option<bool>,
     params: String,
+}
+
+impl InnertubeRequest {
+    fn video_data_request(video_id: String) -> Self {
+        InnertubeRequest {
+            video_id: Some(video_id),
+            browse_id: None,
+            continuation: None,
+            context: InnertubeContext::default(),
+            playback_context: Some(PlaybackContext::default()),
+            content_check_ok: Some(true),
+            racy_check_ok: Some(true),
+            params: PLAYER_PARAMS.to_string(),
+        }
+    }
 }
 
 #[derive(Serialize)]
 struct InnertubeContext {
     client: InnertubeClient,
+}
+
+impl Default for InnertubeContext {
+    fn default() -> Self {
+        InnertubeContext {
+            client: InnertubeClient::default()
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -146,10 +126,34 @@ struct InnertubeClient {
     time_zone: String,
 }
 
+impl Default for InnertubeClient {
+    fn default() -> Self {
+        InnertubeClient {
+            hl: "en".to_string(),
+            gl: "US".to_string(),
+            time_zone: "UTC".to_string(),
+            client_name: CLIENT_NAME.to_string(),
+            client_version: CLIENT_VERSION.to_string(),
+            android_sdk_version: ANDROID_SDK_VERSION,
+            user_agent: USER_AGENT.to_string(),
+        }
+    }
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct PlaybackContext {
     content_playback_context: ContentPlaybackContext,
+}
+
+impl Default for PlaybackContext {
+    fn default() -> Self {
+        PlaybackContext {
+            content_playback_context: ContentPlaybackContext {
+                html5preference: "HTML5_PREF_WANTS".to_string()
+            }
+        }
+    }
 }
 
 #[derive(Serialize)]
