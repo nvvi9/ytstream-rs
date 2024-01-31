@@ -1,3 +1,4 @@
+use mime::Mime;
 use serde::Deserialize;
 use serde_with::{json::JsonString, serde_as};
 use url::Url;
@@ -19,7 +20,8 @@ pub struct StreamingData {
 pub struct Format {
     pub(crate) itag: i32,
     pub(crate) url: Url,
-    pub(crate) mime_type: String,
+    #[serde(with = "crate::serde_impl::mime_type")]
+    pub(crate) mime_type: MimeType,
     pub(crate) quality: Quality,
     pub(crate) signature_cipher: Option<String>,
     pub(crate) bitrate: i32,
@@ -63,6 +65,33 @@ pub enum AudioQuality {
     Medium,
     #[serde(rename = "AUDIO_QUALITY_HIGH")]
     High,
+}
+
+pub struct MimeType {
+    pub mime: Mime,
+    pub codecs: Vec<Codec>,
+}
+
+pub enum Codec {
+    MP4A,
+    AVC1,
+    VP9,
+    AV1,
+    OPUS,
+    Unknown,
+}
+
+impl Codec {
+    pub(crate) fn from_str(s: &str) -> Self {
+        match s {
+            str if str.starts_with("mp4a") => Self::MP4A,
+            str if str.starts_with("avc1") => Self::AVC1,
+            str if str.starts_with("vp9") => Self::VP9,
+            str if str.starts_with("av01") => Self::AV1,
+            str if str.starts_with("opus") => Self::OPUS,
+            _ => Self::Unknown
+        }
+    }
 }
 
 #[serde_as]

@@ -2,8 +2,8 @@ pub mod ytstream;
 pub mod video_data;
 pub mod response_data;
 pub mod stream;
-mod error;
-mod serde_impl;
+pub mod error;
+pub mod serde_impl;
 
 #[cfg(test)]
 mod tests {

@@ -8,7 +8,7 @@ use crate::response_data::video_details::{Thumbnail, VideoDetails};
 
 mod video_details;
 mod playability_status;
-mod streaming_data;
+pub(crate) mod streaming_data;
 mod microformat;
 mod captions;
 
