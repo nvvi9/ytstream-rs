@@ -7,6 +7,7 @@ use serde::Serialize;
 
 use crate::error::Error;
 use crate::response_data::PlayerResponseData;
+use crate::video_data::VideoData;
 
 const USER_AGENT: &str = "com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip";
 const CLIENT_NAME: &str = "ANDROID";
@@ -44,7 +45,10 @@ impl YTStream {
         Ok(Self { client })
     }
 
-    pub async fn extract(self, id: String) {}
+    pub async fn extract(self, id: String) -> Result<VideoData, Error> {
+        let player_response = self.video_data_by_innertube(id).await?;
+        VideoData::from_player_response_data(player_response)
+    }
 
     pub async fn video_data_by_innertube(&self, id: String) -> Result<PlayerResponseData, Error> {
         let request = InnertubeRequest::video_data_request(id);
