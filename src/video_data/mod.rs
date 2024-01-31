@@ -4,6 +4,7 @@ use chrono::NaiveDate;
 
 use crate::error::Error;
 use crate::response_data::PlayerResponseData;
+use crate::stream::Stream;
 
 pub struct VideoData {
     pub id: String,
@@ -16,6 +17,7 @@ pub struct VideoData {
     pub publish_date: Option<NaiveDate>,
     pub keywords: Vec<String>,
     pub thumbnails: Vec<Thumbnail>,
+    pub streams: Vec<Stream>,
 }
 
 pub struct Thumbnail {
@@ -52,6 +54,14 @@ impl VideoData {
         let thumbnails = player_response_data.video_details.thumbnail.thumbnails.iter().map(|t| Thumbnail { url: t.url.to_string(), width: t.width, height: t.height })
             .collect::<Vec<Thumbnail>>();
 
+        let mut formats = Vec::from(player_response_data.streaming_data.formats);
+        let mut adaptive_formats = Vec::from(player_response_data.streaming_data.adaptive_formats);
+        formats.append(&mut adaptive_formats);
+
+        let streams = formats.into_iter()
+            .map(Stream::from_format)
+            .collect();
+
         Ok(Self {
             id,
             title,
@@ -63,6 +73,7 @@ impl VideoData {
             publish_date,
             keywords,
             thumbnails,
+            streams,
         })
     }
 }

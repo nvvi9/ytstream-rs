@@ -50,7 +50,7 @@ impl YTStream {
         VideoData::from_player_response_data(player_response)
     }
 
-    pub async fn video_data_by_innertube(&self, id: String) -> Result<PlayerResponseData, Error> {
+    async fn video_data_by_innertube(&self, id: String) -> Result<PlayerResponseData, Error> {
         let request = InnertubeRequest::video_data_request(id);
 
         self.client.post("https://www.youtube.com/youtubei/v1/player?key=".to_owned() + CLIENT_KEY)
