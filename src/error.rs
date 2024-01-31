@@ -7,4 +7,6 @@ pub enum Error {
     LoginRequired,
     VideoPrivate,
     PlayabilityStatus { reason: String },
+    InitialPlayerResponseNotFound,
+    PlayerResponseDataParse,
 }

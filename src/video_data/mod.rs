@@ -1,6 +1,9 @@
+use std::borrow::Borrow;
 use std::time::Duration;
 
 use chrono::NaiveDate;
+use once_cell::sync::Lazy;
+use regex::Regex;
 
 use crate::error::Error;
 use crate::response_data::PlayerResponseData;
@@ -29,11 +32,31 @@ pub struct Thumbnail {
 }
 
 impl VideoData {
-    pub(crate) fn from_player_response_data(player_response_data: PlayerResponseData) -> Result<Self, Error> {
-        if let Err(e) = player_response_data.playability_status.is_video_downloadable() {
-            return Err(e);
-        }
+    pub(crate) fn from_video_page(body: &str) -> Result<VideoData, Error> {
+        static PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r#"\bvar ytInitialPlayerResponse\s*=\s*(\{.+?\});"#).unwrap());
 
+        let initial_player_response = PATTERN
+            .captures(body)
+            .and_then(|c| c.get(1))
+            .ok_or(Error::InitialPlayerResponseNotFound)?;
+
+        let player_response_data = serde_json::from_str::<PlayerResponseData>(initial_player_response.as_str())
+            .map_err(|_| Error::PlayerResponseDataParse)?;
+
+        match player_response_data.is_video_from_page_downloadable() {
+            Ok(()) => Ok(Self::from_player_response_data(player_response_data)),
+            Err(e) => Err(e)
+        }
+    }
+
+    pub(crate) fn from_video_player(player_response_data: PlayerResponseData) -> Result<Self, Error> {
+        return match player_response_data.is_video_downloadable() {
+            Err(e) => Err(e),
+            Ok(()) => Ok(Self::from_player_response_data(player_response_data))
+        };
+    }
+
+    fn from_player_response_data(player_response_data: PlayerResponseData) -> Self {
         let id = player_response_data.video_details.video_id;
         let title = player_response_data.video_details.title;
         let description = player_response_data.video_details.short_description;
@@ -64,7 +87,7 @@ impl VideoData {
             .map(Stream::from_format)
             .collect();
 
-        Ok(Self {
+        Self {
             id,
             title,
             description,
@@ -76,6 +99,6 @@ impl VideoData {
             keywords,
             thumbnails,
             streams,
-        })
+        }
     }
 }

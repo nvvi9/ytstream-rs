@@ -45,25 +45,41 @@ impl YTStream {
         Ok(Self { client })
     }
 
-    pub async fn extract(&self, id: String) -> Result<VideoData, Error> {
-        let player_response = self.video_data_by_innertube(id).await?;
-        VideoData::from_player_response_data(player_response)
+    pub async fn extract(&self, id: &str) -> Result<VideoData, Error> {
+        let player_response = self.video_data_by_innertube(id)
+            .await
+            .map_err(|e| Error::Request(e))?;
+
+        match VideoData::from_video_player(player_response) {
+            Ok(video_data) => Ok(video_data),
+            Err(Error::NotPlayableInEmbed) => {
+                let page = self.video_page(id).await.map_err(|e| Error::Request(e))?;
+                VideoData::from_video_page(&*page)
+            }
+            Err(e) => Err(e)
+        }
     }
 
-    async fn video_data_by_innertube(&self, id: String) -> Result<PlayerResponseData, Error> {
+    async fn video_data_by_innertube(&self, id: &str) -> Result<PlayerResponseData, reqwest::Error> {
         let request = InnertubeRequest::video_data_request(id);
 
-        self.client.post("https://www.youtube.com/youtubei/v1/player?key=".to_owned() + CLIENT_KEY)
+        self.client.post(format!("https://www.youtube.com/youtubei/v1/player?key={CLIENT_KEY}"))
             .json(&request)
             .send()
-            .await
-            .map_err(|e| Error::Request(e))?
+            .await?
             .json::<PlayerResponseData>()
             .await
-            .map_err(|e| Error::Request(e))
     }
 
-    pub async fn video_data_by_innertube_raw(&self, id: String) -> Result<String, Error> {
+    async fn video_page(&self, id: &str) -> Result<String, reqwest::Error> {
+        self.client.get(format!("https://www.youtube.com/watch?v={id}&bpctr=9999999999&has_verified=1"))
+            .send()
+            .await?
+            .text()
+            .await
+    }
+
+    pub async fn video_data_by_innertube_raw(&self, id: &str) -> Result<String, Error> {
         let request = InnertubeRequest::video_data_request(id);
 
         self.client.post("https://www.youtube.com/youtubei/v1/player?key=".to_owned() + CLIENT_KEY)
@@ -91,9 +107,9 @@ struct InnertubeRequest {
 }
 
 impl InnertubeRequest {
-    fn video_data_request(video_id: String) -> Self {
+    fn video_data_request(video_id: &str) -> Self {
         InnertubeRequest {
-            video_id: Some(video_id),
+            video_id: Some(video_id.to_string()),
             browse_id: None,
             continuation: None,
             context: InnertubeContext::default(),

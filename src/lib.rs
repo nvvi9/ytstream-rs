@@ -14,14 +14,14 @@ mod tests {
     #[tokio::test]
     async fn it_works() {
         let ytstream = assert_ok!(YTStream::new());
-        let response = assert_ok!(ytstream.video_data_by_innertube_raw("34Pl2DTuwoQ".to_owned()).await);
+        let response = assert_ok!(ytstream.video_data_by_innertube_raw("34Pl2DTuwoQ").await);
         println!("{}", response);
     }
 
     #[tokio::test]
     async fn extract() {
         let ytstream = assert_ok!(YTStream::new());
-        let video_data = assert_ok!(ytstream.extract("34Pl2DTuwoQ".to_owned()).await);
+        let video_data = assert_ok!(ytstream.extract("34Pl2DTuwoQ").await);
         println!("{:#?}", video_data);
     }
 }
