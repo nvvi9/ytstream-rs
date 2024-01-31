@@ -41,7 +41,7 @@ pub struct Format {
     pub(crate) index_range: Option<Range>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum Quality {
     Tiny,
@@ -55,7 +55,7 @@ pub enum Quality {
     Hd2160,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub enum AudioQuality {
     #[serde(rename = "AUDIO_QUALITY_ULTRALOW")]
     UltraLow,
@@ -67,11 +67,13 @@ pub enum AudioQuality {
     High,
 }
 
+#[derive(Debug)]
 pub struct MimeType {
     pub mime: Mime,
     pub codecs: Vec<Codec>,
 }
 
+#[derive(Debug)]
 pub enum Codec {
     MP4A,
     AVC1,

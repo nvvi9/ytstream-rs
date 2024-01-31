@@ -45,7 +45,7 @@ impl YTStream {
         Ok(Self { client })
     }
 
-    pub async fn extract(self, id: String) -> Result<VideoData, Error> {
+    pub async fn extract(&self, id: String) -> Result<VideoData, Error> {
         let player_response = self.video_data_by_innertube(id).await?;
         VideoData::from_player_response_data(player_response)
     }

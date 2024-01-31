@@ -6,6 +6,7 @@ use crate::error::Error;
 use crate::response_data::PlayerResponseData;
 use crate::stream::Stream;
 
+#[derive(Debug)]
 pub struct VideoData {
     pub id: String,
     pub title: String,
@@ -20,6 +21,7 @@ pub struct VideoData {
     pub streams: Vec<Stream>,
 }
 
+#[derive(Debug)]
 pub struct Thumbnail {
     pub url: String,
     pub width: u32,

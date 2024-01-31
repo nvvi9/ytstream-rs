@@ -2,6 +2,7 @@ use url::Url;
 
 use crate::response_data::streaming_data::{AudioQuality, Format, MimeType, Quality};
 
+#[derive(Debug)]
 pub struct Stream {
     pub itag: i32,
     pub url: Url,

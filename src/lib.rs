@@ -22,5 +22,6 @@ mod tests {
     async fn extract() {
         let ytstream = assert_ok!(YTStream::new());
         let video_data = assert_ok!(ytstream.extract("34Pl2DTuwoQ".to_owned()).await);
+        println!("{:#?}", video_data);
     }
 }
