@@ -13,7 +13,7 @@ pub struct Captions {
 pub struct PlayerCaptionsTracklistRenderer {
     pub(crate) caption_tracks: Vec<CaptionTrack>,
     pub(crate) audio_tracks: Vec<AudioTrack>,
-    pub(crate) translation_languages: Vec<TranslationLanguage>,
+    pub(crate) translation_languages: Option<Vec<TranslationLanguage>>,
     pub(crate) default_audio_track_index: i32,
 }
 
@@ -24,7 +24,7 @@ pub struct CaptionTrack {
     pub(crate) name: Text,
     pub(crate) vss_id: String,
     pub(crate) language_code: String,
-    pub(crate) kind: String,
+    pub(crate) kind: Option<String>,
     pub(crate) is_translatable: bool,
 }
 

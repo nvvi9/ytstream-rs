@@ -52,5 +52,5 @@ impl PlayerResponseData {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Text {
-    pub(crate) simple_text: String,
+    pub(crate) simple_text: Option<String>,
 }

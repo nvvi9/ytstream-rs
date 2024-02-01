@@ -54,7 +54,7 @@ impl YTStream {
             Ok(video_data) => Ok(video_data),
             Err(Error::NotPlayableInEmbed) => {
                 let page = self.video_page(id).await.map_err(|e| Error::Request(e))?;
-                VideoData::from_video_page(&*page)
+                VideoData::from_video_page(&page)
             }
             Err(e) => Err(e)
         }

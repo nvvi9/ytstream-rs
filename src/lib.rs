@@ -21,7 +21,9 @@ mod tests {
     #[tokio::test]
     async fn extract() {
         let ytstream = assert_ok!(YTStream::new());
-        let video_data = assert_ok!(ytstream.extract("34Pl2DTuwoQ").await);
+        let video_data = assert_ok!(ytstream.extract("GMd13JPiFFA").await);
         println!("{:#?}", video_data);
+        let urls = video_data.streams.iter().map(|s| s.url.as_str()).collect::<Vec<&str>>();
+        println!("{:#?}", urls);
     }
 }
