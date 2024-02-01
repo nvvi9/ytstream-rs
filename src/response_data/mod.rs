@@ -7,11 +7,11 @@ use crate::response_data::playability_status::PlayabilityStatus;
 use crate::response_data::streaming_data::StreamingData;
 use crate::response_data::video_details::{Thumbnail, VideoDetails};
 
-mod video_details;
+mod captions;
+mod microformat;
 mod playability_status;
 pub(crate) mod streaming_data;
-mod microformat;
-mod captions;
+mod video_details;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -27,24 +27,48 @@ impl PlayerResponseData {
     pub(crate) fn is_video_downloadable(&self) -> Result<(), Error> {
         match &self.playability_status {
             PlayabilityStatus::Ok => Ok(()),
-            PlayabilityStatus::LoginRequired { reason } if reason.starts_with("This video is private") => Err(Error::VideoPrivate),
+            PlayabilityStatus::LoginRequired { reason }
+                if reason.starts_with("This video is private") =>
+            {
+                Err(Error::VideoPrivate)
+            }
             PlayabilityStatus::LoginRequired { .. } => Err(Error::LoginRequired),
-            PlayabilityStatus::Unplayable { playable_in_embed, .. } if !playable_in_embed => Err(Error::NotPlayableInEmbed),
-            PlayabilityStatus::Unplayable { reason, .. } => Err(Error::PlayabilityStatus { reason: reason.to_string() }),
-            PlayabilityStatus::LiveStreamOffline { playable_in_embed, .. } if !playable_in_embed => Err(Error::NotPlayableInEmbed),
-            PlayabilityStatus::LiveStreamOffline { reason, .. } => Err(Error::PlayabilityStatus { reason: reason.to_string() }),
-            PlayabilityStatus::Error { reason } => Err(Error::PlayabilityStatus { reason: reason.to_string() })
+            PlayabilityStatus::Unplayable {
+                playable_in_embed, ..
+            } if !playable_in_embed => Err(Error::NotPlayableInEmbed),
+            PlayabilityStatus::Unplayable { reason, .. } => Err(Error::PlayabilityStatus {
+                reason: reason.to_string(),
+            }),
+            PlayabilityStatus::LiveStreamOffline {
+                playable_in_embed, ..
+            } if !playable_in_embed => Err(Error::NotPlayableInEmbed),
+            PlayabilityStatus::LiveStreamOffline { reason, .. } => Err(Error::PlayabilityStatus {
+                reason: reason.to_string(),
+            }),
+            PlayabilityStatus::Error { reason } => Err(Error::PlayabilityStatus {
+                reason: reason.to_string(),
+            }),
         }
     }
 
     pub(crate) fn is_video_from_page_downloadable(&self) -> Result<(), Error> {
         match &self.playability_status {
             PlayabilityStatus::Ok => Ok(()),
-            PlayabilityStatus::LoginRequired { reason } if reason.starts_with("This video is private") => Err(Error::VideoPrivate),
+            PlayabilityStatus::LoginRequired { reason }
+                if reason.starts_with("This video is private") =>
+            {
+                Err(Error::VideoPrivate)
+            }
             PlayabilityStatus::LoginRequired { .. } => Err(Error::LoginRequired),
-            PlayabilityStatus::Unplayable { reason, .. } => Err(Error::PlayabilityStatus { reason: reason.to_string() }),
-            PlayabilityStatus::LiveStreamOffline { reason, .. } => Err(Error::PlayabilityStatus { reason: reason.to_string() }),
-            PlayabilityStatus::Error { reason } => Err(Error::PlayabilityStatus { reason: reason.to_string() })
+            PlayabilityStatus::Unplayable { reason, .. } => Err(Error::PlayabilityStatus {
+                reason: reason.to_string(),
+            }),
+            PlayabilityStatus::LiveStreamOffline { reason, .. } => Err(Error::PlayabilityStatus {
+                reason: reason.to_string(),
+            }),
+            PlayabilityStatus::Error { reason } => Err(Error::PlayabilityStatus {
+                reason: reason.to_string(),
+            }),
         }
     }
 }
