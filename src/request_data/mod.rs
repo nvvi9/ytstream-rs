@@ -44,7 +44,7 @@ impl InnertubeContext {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-struct InnertubeClient {
+pub struct InnertubeClient {
     pub hl: String,
     pub gl: String,
     pub time_zone: String,
