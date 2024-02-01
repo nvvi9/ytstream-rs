@@ -9,13 +9,13 @@ pub enum PlayabilityStatus {
         playable_in_embed: bool,
     },
     LoginRequired {
-        reason: String
+        reason: String,
     },
     LiveStreamOffline {
         reason: String,
         playable_in_embed: bool,
     },
     Error {
-        reason: String
+        reason: String,
     },
 }

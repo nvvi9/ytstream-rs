@@ -1,3 +1,4 @@
+use crate::video_data::Thumbnail;
 use serde::Deserialize;
 use serde_with::{json::JsonString, serde_as};
 
@@ -5,34 +6,27 @@ use serde_with::{json::JsonString, serde_as};
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct VideoDetails {
-    pub(crate) video_id: String,
-    pub(crate) title: String,
+    pub video_id: String,
+    pub title: String,
     #[serde_as(as = "JsonString")]
-    pub(crate) length_seconds: Option<u64>,
-    pub(crate) keywords: Vec<String>,
-    pub(crate) channel_id: String,
-    pub(crate) is_owner_viewing: bool,
-    pub(crate) short_description: String,
-    pub(crate) is_crawlable: bool,
-    pub(crate) thumbnail: Thumbnails,
-    pub(crate) average_rating: Option<f64>,
-    pub(crate) allow_ratings: bool,
+    pub length_seconds: Option<u64>,
+    pub keywords: Vec<String>,
+    pub channel_id: String,
+    pub is_owner_viewing: bool,
+    pub short_description: String,
+    pub is_crawlable: bool,
+    pub thumbnail: Thumbnails,
+    pub average_rating: Option<f64>,
+    pub allow_ratings: bool,
     #[serde_as(as = "JsonString")]
-    pub(crate) view_count: u64,
-    pub(crate) author: String,
-    pub(crate) is_private: bool,
-    pub(crate) is_unplugged_corpus: bool,
-    pub(crate) is_live_content: bool,
+    pub view_count: u64,
+    pub author: String,
+    pub is_private: bool,
+    pub is_unplugged_corpus: bool,
+    pub is_live_content: bool,
 }
 
 #[derive(Deserialize)]
 pub struct Thumbnails {
-    pub(crate) thumbnails: Vec<crate::response_data::Thumbnail>,
-}
-
-#[derive(Deserialize)]
-pub struct Thumbnail {
-    pub(crate) url: String,
-    pub(crate) width: u32,
-    pub(crate) height: u32,
+    pub thumbnails: Vec<Thumbnail>,
 }

@@ -1,26 +1,15 @@
+use error::Error;
+use video_data::VideoData;
+use ytstream::YTStream;
+
+mod client_type;
 pub mod error;
-pub mod response_data;
-pub mod serde_impl;
-pub mod stream;
+mod request_data;
+mod response_data;
+mod serde_impl;
 pub mod video_data;
 pub mod ytstream;
 
-#[cfg(test)]
-mod tests {
-    use tokio_test::assert_ok;
-
-    use crate::ytstream::YTStream;
-
-    #[tokio::test]
-    async fn extract() {
-        let ytstream = assert_ok!(YTStream::new());
-        let video_data = assert_ok!(ytstream.extract("GMd13JPiFFA").await);
-        println!("{:#?}", video_data);
-        let urls = video_data
-            .streams
-            .iter()
-            .map(|s| s.url.as_str())
-            .collect::<Vec<&str>>();
-        println!("{:#?}", urls);
-    }
+pub async fn extract_video_data(video_id: &str) -> Result<VideoData, Error> {
+    YTStream::new()?.extract(video_id).await
 }

@@ -1,30 +1,29 @@
-use serde::Deserialize;
-
 use crate::error::Error;
 use crate::response_data::captions::Captions;
 use crate::response_data::microformat::Microformat;
 use crate::response_data::playability_status::PlayabilityStatus;
 use crate::response_data::streaming_data::StreamingData;
-use crate::response_data::video_details::{Thumbnail, VideoDetails};
+use crate::response_data::video_details::VideoDetails;
+use serde::Deserialize;
 
-mod captions;
-mod microformat;
-mod playability_status;
+pub(crate) mod captions;
+pub(crate) mod microformat;
+pub(crate) mod playability_status;
 pub(crate) mod streaming_data;
-mod video_details;
+pub(crate) mod video_details;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PlayerResponseData {
-    pub(crate) captions: Option<Captions>,
-    pub(crate) playability_status: PlayabilityStatus,
-    pub(crate) streaming_data: StreamingData,
-    pub(crate) video_details: VideoDetails,
-    pub(crate) microformat: Option<Microformat>,
+    pub captions: Option<Captions>,
+    pub playability_status: PlayabilityStatus,
+    pub streaming_data: StreamingData,
+    pub video_details: VideoDetails,
+    pub microformat: Option<Microformat>,
 }
 
 impl PlayerResponseData {
-    pub(crate) fn is_video_downloadable(&self) -> Result<(), Error> {
+    pub fn is_video_downloadable(&self) -> Result<(), Error> {
         match &self.playability_status {
             PlayabilityStatus::Ok => Ok(()),
             PlayabilityStatus::LoginRequired { reason }
@@ -51,7 +50,7 @@ impl PlayerResponseData {
         }
     }
 
-    pub(crate) fn is_video_from_page_downloadable(&self) -> Result<(), Error> {
+    pub fn is_video_from_page_downloadable(&self) -> Result<(), Error> {
         match &self.playability_status {
             PlayabilityStatus::Ok => Ok(()),
             PlayabilityStatus::LoginRequired { reason }
@@ -76,5 +75,5 @@ impl PlayerResponseData {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Text {
-    pub(crate) simple_text: Option<String>,
+    pub simple_text: Option<String>,
 }
