@@ -1,26 +1,27 @@
-use crate::client_type::ClientType;
 use serde::Serialize;
+
+use crate::client_type::ClientType;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct InnertubeRequest {
+pub struct YoutubePlayerRequest {
     pub video_id: Option<String>,
     pub browse_id: Option<String>,
     pub continuation: Option<String>,
-    pub context: InnertubeContext,
+    pub context: PlayerContext,
     pub playback_context: Option<PlaybackContext>,
     pub content_check_ok: Option<bool>,
     pub racy_check_ok: Option<bool>,
     pub params: String,
 }
 
-impl InnertubeRequest {
+impl YoutubePlayerRequest {
     pub fn video_data_request(video_id: &str, client_type: &ClientType) -> Self {
-        InnertubeRequest {
+        Self {
             video_id: Some(video_id.to_string()),
             browse_id: None,
             continuation: None,
-            context: InnertubeContext::from_client_type(client_type),
+            context: PlayerContext::from_client_type(client_type),
             playback_context: Some(PlaybackContext::default()),
             content_check_ok: Some(true),
             racy_check_ok: Some(true),
@@ -30,21 +31,21 @@ impl InnertubeRequest {
 }
 
 #[derive(Serialize)]
-pub struct InnertubeContext {
-    pub client: InnertubeClient,
+pub struct PlayerContext {
+    pub client: PlayerClient,
 }
 
-impl InnertubeContext {
+impl PlayerContext {
     pub fn from_client_type(client_type: &ClientType) -> Self {
         Self {
-            client: InnertubeClient::from_client_type(client_type),
+            client: PlayerClient::from_client_type(client_type),
         }
     }
 }
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct InnertubeClient {
+pub struct PlayerClient {
     pub hl: String,
     pub gl: String,
     pub time_zone: String,
@@ -54,7 +55,7 @@ pub struct InnertubeClient {
     pub user_agent: String,
 }
 
-impl InnertubeClient {
+impl PlayerClient {
     pub fn from_client_type(client_type: &ClientType) -> Self {
         Self {
             hl: "en".to_string(),

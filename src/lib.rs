@@ -8,6 +8,7 @@ mod request_data;
 mod response_data;
 mod serde_impl;
 pub mod video_data;
+mod youtube_client;
 pub mod ytstream;
 
 pub async fn extract_video_data(video_id: &str) -> Result<VideoData, Error> {

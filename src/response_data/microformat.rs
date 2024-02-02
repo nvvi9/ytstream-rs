@@ -1,7 +1,10 @@
-use crate::{response_data::Text, video_data::Thumbnail};
 use chrono::NaiveDate;
 use serde::Deserialize;
 use serde_with::{json::JsonString, serde_as};
+
+use crate::video_data::Thumbnail;
+
+use super::Text;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]

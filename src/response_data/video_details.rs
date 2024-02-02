@@ -1,6 +1,7 @@
-use crate::video_data::Thumbnail;
 use serde::Deserialize;
 use serde_with::{json::JsonString, serde_as};
+
+use crate::video_data::Thumbnail;
 
 #[serde_as]
 #[derive(Deserialize)]
@@ -10,7 +11,7 @@ pub struct VideoDetails {
     pub title: String,
     #[serde_as(as = "JsonString")]
     pub length_seconds: Option<u64>,
-    pub keywords: Vec<String>,
+    pub keywords: Option<Vec<String>>,
     pub channel_id: String,
     pub is_owner_viewing: bool,
     pub short_description: String,

@@ -1,7 +1,8 @@
-use crate::video_data::stream::{AudioQuality, MimeType, Quality};
 use serde::Deserialize;
 use serde_with::{json::JsonString, serde_as};
 use url::Url;
+
+use crate::video_data::stream::{AudioQuality, MimeType, Quality};
 
 #[serde_as]
 #[derive(Deserialize)]

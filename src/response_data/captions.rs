@@ -1,5 +1,6 @@
-use crate::response_data::Text;
 use serde::Deserialize;
+
+use super::Text;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]

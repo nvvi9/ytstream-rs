@@ -1,11 +1,13 @@
-use self::stream::Stream;
-use crate::error::Error;
-use crate::response_data::PlayerResponseData;
+use std::time::Duration;
+
 use chrono::NaiveDate;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use std::time::Duration;
+
+use crate::{error::Error, response_data::PlayerResponseData};
+
+use self::stream::Stream;
 
 pub mod stream;
 
@@ -19,7 +21,7 @@ pub struct VideoData {
     pub duration: Duration,
     pub view_count: u64,
     pub publish_date: Option<NaiveDate>,
-    pub keywords: Vec<String>,
+    pub keywords: Option<Vec<String>>,
     pub thumbnails: Vec<Thumbnail>,
     pub streams: Vec<Stream>,
 }

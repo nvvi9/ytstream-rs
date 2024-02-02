@@ -1,10 +1,11 @@
-use crate::error::Error;
-use crate::response_data::captions::Captions;
-use crate::response_data::microformat::Microformat;
-use crate::response_data::playability_status::PlayabilityStatus;
-use crate::response_data::streaming_data::StreamingData;
-use crate::response_data::video_details::VideoDetails;
 use serde::Deserialize;
+
+use crate::error::Error;
+
+use self::{
+    captions::Captions, microformat::Microformat, playability_status::PlayabilityStatus,
+    streaming_data::StreamingData, video_details::VideoDetails,
+};
 
 pub(crate) mod captions;
 pub(crate) mod microformat;

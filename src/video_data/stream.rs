@@ -1,7 +1,8 @@
-use crate::response_data::streaming_data::Format;
 use mime::Mime;
 use serde::Deserialize;
 use url::Url;
+
+use crate::response_data::streaming_data::Format;
 
 #[derive(Debug)]
 pub struct Stream {

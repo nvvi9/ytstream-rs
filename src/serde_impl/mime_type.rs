@@ -1,10 +1,11 @@
-use crate::video_data::stream::{Codec, MimeType};
+use std::str::FromStr;
+
 use mime::Mime;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use serde::de::{Error, Unexpected};
-use serde::{Deserialize, Deserializer};
-use std::str::FromStr;
+use serde::{de::Error, de::Unexpected, Deserialize, Deserializer};
+
+use crate::video_data::stream::{Codec, MimeType};
 
 pub fn deserialize<'de, D>(deserializer: D) -> Result<MimeType, <D as Deserializer<'de>>::Error>
 where
